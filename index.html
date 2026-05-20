@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Housing User Cost Calculator</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      background-color: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .results {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #efefef;
+      border-radius: 8px;
+    }
+
+    .results p {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Housing User Cost Calculator</h1>
+
+    <div class="input-group">
+      <label>House Price ($)</label>
+      <input type="number" id="price">
+    </div>
+
+    <div class="input-group">
+      <label>Monthly Rent ($)</label>
+      <input type="number" id="rent">
+    </div>
+
+    <div class="input-group">
+      <label>Mortgage Rate (%)</label>
+      <input type="number" id="mortgage">
+    </div>
+
+    <div class="input-group">
+      <label>Depreciation Rate (%)</label>
+      <input type="number" id="depreciation">
+    </div>
+
+    <div class="input-group">
+      <label>Expected Growth (%)</label>
+      <input type="number" id="growth">
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div class="results">
+
+      <p id="userCost"></p>
+
+      <p id="annualRent"></p>
+
+      <p id="ratio"></p>
+
+      <p id="recommendation"></p>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    function calculate() {
+
+      const P = Number(document.getElementById("price").value);
+
+      const monthlyRent = Number(document.getElementById("rent").value);
+
+      const r = Number(document.getElementById("mortgage").value) / 100;
+
+      const d = Number(document.getElementById("depreciation").value) / 100;
+
+      const g = Number(document.getElementById("growth").value) / 100;
+
+      const annualRent = monthlyRent * 12;
+
+      const userCost = P * (r + d - g);
+
+      const ratio = annualRent / userCost;
+
+      let recommendation = "";
+
+      if (ratio > 1.1) {
+        recommendation = "Buying looks favorable.";
+      } else if (ratio < 0.9) {
+        recommendation = "Renting looks favorable.";
+      } else {
+        recommendation = "Market looks relatively balanced.";
+      }
+
+      document.getElementById("userCost").innerText =
+        "User Cost: $" + userCost.toFixed(2);
+
+      document.getElementById("annualRent").innerText =
+        "Annual Rent: $" + annualRent.toFixed(2);
+
+      document.getElementById("ratio").innerText =
+        "R/u Ratio: " + ratio.toFixed(2);
+
+      document.getElementById("recommendation").innerText =
+        recommendation;
+    }
+
+  </script>
+
+</body>
+</html>
