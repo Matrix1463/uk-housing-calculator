@@ -1,159 +1,425 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <title>Housing User Cost Calculator</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UK Housing User Cost Calculator</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      padding: 40px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f3;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2rem 1rem;
     }
 
     .container {
-      max-width: 700px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
+      max-width: 720px;
+      margin: 0 auto;
     }
 
-    h1 {
-      text-align: center;
+    header {
+      margin-bottom: 2rem;
     }
 
-    .input-group {
-      margin-bottom: 20px;
+    header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: .35rem;
     }
 
-    label {
-      display: block;
-      margin-bottom: 5px;
+    header p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
     }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      border: 0.5px solid #e0e0e0;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
     }
 
-    button {
-      width: 100%;
-      padding: 15px;
-      font-size: 16px;
-      background-color: black;
-      color: white;
-      border: none;
-      cursor: pointer;
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 1rem;
     }
 
-    .results {
-      margin-top: 30px;
-      padding: 20px;
-      background-color: #efefef;
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+    .field { display: flex; flex-direction: column; gap: 4px; }
+
+    .field label {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .field input {
+      height: 38px;
+      padding: 0 10px;
+      border: 0.5px solid #ccc;
       border-radius: 8px;
+      font-size: 14px;
+      color: #1a1a1a;
+      background: #fff;
+      transition: border-color .15s, box-shadow .15s;
     }
 
-    .results p {
-      margin: 10px 0;
+    .field input:focus {
+      outline: none;
+      border-color: #4a90d9;
+      box-shadow: 0 0 0 3px rgba(74,144,217,.15);
+    }
+
+    .field .hint {
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .metrics-grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .metric {
+      background: #f8f8f6;
+      border-radius: 8px;
+      padding: .875rem 1rem;
+    }
+
+    .metric .mlabel {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .metric .mval {
+      font-size: 20px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+
+    .metric .msub {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    .regime-card {
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      border: 0.5px solid #e0e0e0;
+    }
+
+    .regime-title {
+      font-size: 17px;
+      font-weight: 500;
+      margin-bottom: .4rem;
+    }
+
+    .regime-sub {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .sens-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .sens-row label {
+      font-size: 13px;
+      color: #555;
+      min-width: 100px;
+    }
+
+    .sens-row input[type=range] {
+      flex: 1;
+      accent-color: #4a90d9;
+    }
+
+    .sens-row span {
+      font-size: 13px;
+      font-weight: 500;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .bar-label {
+      font-size: 12px;
+      color: #888;
+      min-width: 56px;
+      text-align: right;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 16px;
+      background: #f0f0ee;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .25s;
+    }
+
+    .bar-val {
+      font-size: 12px;
+      font-weight: 500;
+      color: #444;
+      min-width: 36px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 0.5px solid #e8e8e8;
+      margin: 1.5rem 0;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 540px) {
+      .grid2, .grid3, .metrics-grid, .metrics-grid2 {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
-
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <h1>Housing User Cost Calculator</h1>
+  <header>
+    <h1>UK Housing User Cost Calculator</h1>
+    <p>Based on the Poterba (1984) model. Enter your property details to see whether buying or renting makes more financial sense.</p>
+  </header>
 
-    <div class="input-group">
-      <label>House Price (€)</label>
-      <input type="number" id="price">
+  <div class="card">
+    <div class="section-label">Property inputs</div>
+    <div class="grid2">
+      <div class="field">
+        <label>House price (£)</label>
+        <input type="number" id="price" value="350000" step="1000">
+      </div>
+      <div class="field">
+        <label>Monthly rent (£)</label>
+        <input type="number" id="rent" value="1500" step="50">
+      </div>
     </div>
-
-    <div class="input-group">
-      <label>Monthly Rent (€)</label>
-      <input type="number" id="rent">
-    </div>
-
-    <div class="input-group">
-      <label>Mortgage Rate (%)</label>
-      <input type="number" id="mortgage">
-    </div>
-
-    <div class="input-group">
-      <label>Depreciation Rate (%)</label>
-      <input type="number" id="depreciation">
-    </div>
-
-    <div class="input-group">
-      <label>Expected Growth (%)</label>
-      <input type="number" id="growth">
-    </div>
-
-    <button onclick="calculate()">Calculate</button>
-
-    <div class="results">
-
-      <p id="userCost"></p>
-
-      <p id="annualRent"></p>
-
-      <p id="ratio"></p>
-
-      <p id="recommendation"></p>
-
-    </div>
-
   </div>
 
-  <script>
+  <div class="card">
+    <div class="section-label">Rate inputs</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Mortgage rate (%)</label>
+        <input type="number" id="rrate" value="4.5" step="0.1" min="0" max="20">
+        <span class="hint">Current UK avg ~4.4%</span>
+      </div>
+      <div class="field">
+        <label>Depreciation (%)</label>
+        <input type="number" id="drate" value="3" step="0.1" min="0" max="10">
+        <span class="hint">Maintenance + taxes</span>
+      </div>
+      <div class="field">
+        <label>Expected growth (%)</label>
+        <input type="number" id="grate" value="3" step="0.1" min="-5" max="20">
+        <span class="hint">Annual price appreciation</span>
+      </div>
+    </div>
+  </div>
 
-    function calculate() {
+  <div class="card">
+    <div class="section-label">Results</div>
+    <div class="metrics-grid">
+      <div class="metric">
+        <div class="mlabel">Annual user cost (u)</div>
+        <div class="mval" id="out-u">—</div>
+        <div class="msub">True cost of owning/yr</div>
+      </div>
+      <div class="metric">
+        <div class="mlabel">Annual rent (R)</div>
+        <div class="mval" id="out-r">—</div>
+        <div class="msub">What you'd pay renting</div>
+      </div>
+      <div class="metric">
+        <div class="mlabel">R/u ratio</div>
+        <div class="mval" id="out-ru">—</div>
+        <div class="msub">Rent ÷ user cost</div>
+      </div>
+    </div>
+    <div class="metrics-grid2">
+      <div class="metric">
+        <div class="mlabel">Implied growth (g)</div>
+        <div class="mval" id="out-ig">—</div>
+        <div class="msub">Appreciation priced in by market</div>
+      </div>
+      <div class="metric">
+        <div class="mlabel">Your expected growth</div>
+        <div class="mval" id="out-eg">—</div>
+        <div class="msub">What you entered above</div>
+      </div>
+    </div>
 
-      const P = Number(document.getElementById("price").value);
+    <div class="regime-card" id="regime-card">
+      <div class="regime-title" id="regime-title">—</div>
+      <div class="regime-sub" id="regime-sub">—</div>
+    </div>
+  </div>
 
-      const monthlyRent = Number(document.getElementById("rent").value);
+  <div class="card">
+    <div class="section-label">Sensitivity — R/u ratio across depreciation rates</div>
+    <div class="sens-row">
+      <label>Depreciation</label>
+      <input type="range" id="sens-d" min="1" max="6" step="0.5" value="3">
+      <span id="sens-d-out">3.0%</span>
+    </div>
+    <div id="bar-wrap"></div>
+  </div>
 
-      const r = Number(document.getElementById("mortgage").value) / 100;
+  <footer>
+    Based on Poterba (1984) and Himmelberg, Mayer & Sinai (2005). For educational purposes only.
+  </footer>
 
-      const d = Number(document.getElementById("depreciation").value) / 100;
+</div>
 
-      const g = Number(document.getElementById("growth").value) / 100;
+<script>
+  const $ = id => document.getElementById(id);
 
-      const annualRent = monthlyRent * 12;
+  const SCENARIOS = [
+    {label:'1.0%',d:0.01},{label:'1.5%',d:0.015},{label:'2.0%',d:0.02},
+    {label:'2.5%',d:0.025},{label:'3.0%',d:0.03},{label:'3.5%',d:0.035},
+    {label:'4.0%',d:0.04},{label:'4.5%',d:0.045},{label:'5.0%',d:0.05},
+    {label:'5.5%',d:0.055},{label:'6.0%',d:0.06}
+  ];
 
-      const userCost = P * (r + d - g);
+  function fmt(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
+  function fmtPct(n) { return (n * 100).toFixed(1) + '%'; }
 
-      const ratio = annualRent / userCost;
+  function classify(ru) {
+    if (ru === null || !isFinite(ru)) return {
+      label: 'Speculation-dominated',
+      sub: 'The implied user cost is zero or negative — the market is pricing in appreciation so high that the ownership cost disappears on paper. This is a classic bubble signal. Renting is likely the safer financial choice.',
+      bg: '#fff5f5', border: '#f5c6c6', color: '#b91c1c'
+    };
+    if (ru > 1.08) return {
+      label: 'Undervalued — buying looks attractive',
+      sub: 'Rent exceeds the true cost of owning. The market may be under-pricing this property relative to its rental value. Buying looks financially favourable based on these inputs.',
+      bg: '#f0fdf4', border: '#86efac', color: '#15803d'
+    };
+    if (ru >= 0.92) return {
+      label: 'Balanced — near equilibrium',
+      sub: 'Rent and user cost are roughly equal. Neither buying nor renting has a strong financial edge — other factors like stability, flexibility, and lifestyle should guide your decision.',
+      bg: '#eff6ff', border: '#93c5fd', color: '#1d4ed8'
+    };
+    return {
+      label: 'Overvalued — renting looks better',
+      sub: 'The cost of owning exceeds what you\'d pay in rent. Prices are high relative to rental income. Renting may be the more cost-efficient option at current prices.',
+      bg: '#fffbeb', border: '#fcd34d', color: '#92400e'
+    };
+  }
 
-      let recommendation = "";
+  function calc() {
+    const P = parseFloat($('price').value) || 0;
+    const monthlyRent = parseFloat($('rent').value) || 0;
+    const r = (parseFloat($('rrate').value) || 0) / 100;
+    const d = (parseFloat($('drate').value) || 0) / 100;
+    const g = (parseFloat($('grate').value) || 0) / 100;
 
-      if (ratio > 1.1) {
-        recommendation = "Buying looks favorable.";
-      } else if (ratio < 0.9) {
-        recommendation = "Renting looks favorable.";
-      } else {
-        recommendation = "Market looks relatively balanced.";
-      }
+    const R = monthlyRent * 12;
+    const u = P * (r + d - g);
+    const ru = u > 0 ? R / u : null;
+    const ig = r + d - (R / P);
 
-      document.getElementById("userCost").innerText =
-        "User Cost: €" + userCost.toFixed(2);
+    $('out-u').textContent = fmt(u);
+    $('out-r').textContent = fmt(R);
+    $('out-ru').textContent = ru !== null ? ru.toFixed(2) : 'N/A';
+    $('out-ig').textContent = fmtPct(ig);
+    $('out-eg').textContent = fmtPct(g);
 
-      document.getElementById("annualRent").innerText =
-        "Annual Rent: €" + annualRent.toFixed(2);
+    const c = classify(ru);
+    const card = $('regime-card');
+    card.style.background = c.bg;
+    card.style.borderColor = c.border;
+    $('regime-title').style.color = c.color;
+    $('regime-title').textContent = c.label;
+    $('regime-sub').textContent = c.sub;
 
-      document.getElementById("ratio").innerText =
-        "R/u Ratio: " + ratio.toFixed(2);
+    renderBars(P, monthlyRent, r, g);
+  }
 
-      document.getElementById("recommendation").innerText =
-        recommendation;
-    }
+  function renderBars(P, monthlyRent, r, g) {
+    const R = monthlyRent * 12;
+    const dVal = parseFloat($('sens-d').value) / 100;
+    $('sens-d-out').textContent = (dVal * 100).toFixed(1) + '%';
 
-  </script>
+    const rows = SCENARIOS.map(s => {
+      const u = P * (r + s.d - g);
+      const ru = u > 0 ? R / u : null;
+      const c = classify(ru);
+      return { label: s.label, ru, color: c.border, val: ru !== null ? ru.toFixed(2) : 'N/A' };
+    });
+
+    const maxRu = Math.max(...rows.filter(r => r.ru !== null).map(r => r.ru), 2);
+
+    $('bar-wrap').innerHTML = rows.map(row => {
+      const pct = row.ru !== null ? Math.min(row.ru / maxRu * 100, 100) : 0;
+      const active = Math.abs(dVal - SCENARIOS.find(s => s.label === row.label)?.d) < 0.001;
+      return `<div class="bar-row" style="opacity:${active ? 1 : 0.45}">
+        <span class="bar-label">${row.label}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct.toFixed(1)}%;background:${row.color}"></div></div>
+        <span class="bar-val">${row.val}</span>
+      </div>`;
+    }).join('');
+  }
+
+  ['price','rent','rrate','drate','grate'].forEach(id => $(id).addEventListener('input', calc));
+  $('sens-d').addEventListener('input', () => {
+    const P = parseFloat($('price').value) || 0;
+    const m = parseFloat($('rent').value) || 0;
+    const r = (parseFloat($('rrate').value) || 0) / 100;
+    const g = (parseFloat($('grate').value) || 0) / 100;
+    renderBars(P, m, r, g);
+  });
+
+  calc();
+</script>
 
 </body>
 </html>
